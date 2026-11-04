@@ -2,7 +2,6 @@ package sigv4s3
 
 import (
 	"bytes"
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -82,17 +81,17 @@ func TestPutAndCopy(t *testing.T) {
 	}
 
 	data := []byte("hello world")
-	err = client.PutObject(context.Background(), "test.txt", bytes.NewReader(data), "text/plain", nil)
+	err = client.PutObject(t.Context(), "test.txt", bytes.NewReader(data), "text/plain", nil)
 	if err != nil {
 		t.Fatalf("PutObject failed: %v", err)
 	}
 
-	err = client.CopyObject(context.Background(), "test.txt", "test-copy.txt", nil)
+	err = client.CopyObject(t.Context(), "test.txt", "test-copy.txt", nil)
 	if err != nil {
 		t.Fatalf("CopyObject failed: %v", err)
 	}
 
-	err = client.DeleteObject(context.Background(), "test.txt")
+	err = client.DeleteObject(t.Context(), "test.txt")
 	if err != nil {
 		t.Fatalf("DeleteObject failed: %v", err)
 	}

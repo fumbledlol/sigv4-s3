@@ -2,6 +2,7 @@ package sigv4s3
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"crypto/hmac"
 	"crypto/md5" // #nosec G501 -- required by AWS S3 SSE-C protocol specification
@@ -88,10 +89,7 @@ func New(cfg Config) (*Client, error) {
 		}
 	}
 
-	region := cfg.Region
-	if region == "" {
-		region = "us-east-1"
-	}
+	region := cmp.Or(cfg.Region, "us-east-1")
 
 	return &Client{
 		httpClient: httpClient,
@@ -133,7 +131,7 @@ func EscapePath(key string) string {
 func escapeSegment(s string) string {
 	var b strings.Builder
 	b.Grow(len(s))
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		ch := s[i]
 		if (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') ||
 			ch == '-' || ch == '_' || ch == '.' || ch == '~' {
